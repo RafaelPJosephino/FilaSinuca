@@ -92,17 +92,28 @@ public class GerenciadorSinuca
     }
 
     public bool RemoverDaFilaPorId(string id)
-        => RebuildQueueExcluding(p => p.Id == id) > 0;
+    {
+        var removed = RebuildQueueExcluding(p => p.Id == id) > 0;
+        if (removed) _vitoriasSeguidas.Remove(id);
+        return removed;
+    }
 
     public int RemoverDaFilaPorNome(string nome)
-        => RebuildQueueExcluding(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase));
+    {
+        var removidos = new List<Pessoa>(_fila.Where(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase)));
+        var qtd = RebuildQueueExcluding(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase));
+        foreach (var p in removidos) _vitoriasSeguidas.Remove(p.Id);
+        return qtd;
+    }
 
     public bool RemoverDaFilaPorIndice(int indiceZeroBase)
     {
         if (indiceZeroBase < 0 || indiceZeroBase >= _fila.Count) return false;
         var list = _fila.ToList();
+        var removido = list[indiceZeroBase];
         list.RemoveAt(indiceZeroBase);
         _fila = new Queue<Pessoa>(list);
+        _vitoriasSeguidas.Remove(removido.Id);
         return true;
     }
 
