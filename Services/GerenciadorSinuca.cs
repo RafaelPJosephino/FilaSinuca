@@ -56,8 +56,16 @@ public class GerenciadorSinuca
 
     public void RemoverJogadorMesa(int posicao)
     {
-        if (posicao == 1 && _jogador1 != null) _jogador1 = null;
-        else if (posicao == 2 && _jogador2 != null) _jogador2 = null;
+        if (posicao == 1 && _jogador1 != null)
+        {
+            _fila.Enqueue(_jogador1);
+            _jogador1 = null;
+        }
+        else if (posicao == 2 && _jogador2 != null)
+        {
+            _fila.Enqueue(_jogador2);
+            _jogador2 = null;
+        }
     }
 
     public bool RemoverDaFilaPorId(string id)
@@ -77,8 +85,18 @@ public class GerenciadorSinuca
 
     public bool RemoverPessoa(Pessoa pessoa)
     {
-        if (_jogador1?.Id == pessoa.Id) { _jogador1 = null; return true; }
-        if (_jogador2?.Id == pessoa.Id) { _jogador2 = null; return true; }
+        if (_jogador1?.Id == pessoa.Id)
+        {
+            _fila.Enqueue(_jogador1);
+            _jogador1 = null;
+            return true;
+        }
+        if (_jogador2?.Id == pessoa.Id)
+        {
+            _fila.Enqueue(_jogador2);
+            _jogador2 = null;
+            return true;
+        }
         return RemoverDaFilaPorId(pessoa.Id);
     }
 
