@@ -1,7 +1,7 @@
 using FilaSinuca.Models;
 using FilaSinuca.Services;
 
-namespace FilaSinuca.Pages;
+namespace FilaSinuca;
 
 public partial class MainPage : ContentPage
 {
@@ -195,18 +195,4 @@ public partial class MainPage : ContentPage
         await PersistAsync();
     }
 
-    private async void OnRemoverPorIndice(object sender, EventArgs e)
-    {
-        if (!int.TryParse(EntryIndiceRemover.Text, out var idx))
-        {
-            await DisplayAlert("Aviso", "Índice inválido.", "OK");
-            return;
-        }
-        if (!await Confirm("Remover por índice", $"Remover o índice {idx} da fila?")) return;
-        var ok = _g.RemoverDaFilaPorIndice(idx);
-        await DisplayAlert("Remoção por índice", ok ? "Removido." : "Índice fora da faixa.", "OK");
-        EntryIndiceRemover.Text = string.Empty;
-        RefreshUI();
-        await PersistAsync();
-    }
 }

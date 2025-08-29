@@ -17,22 +17,23 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Mesa" FontAttributes="Bold" FontSize="18" />
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                        <Frame>
+                        <Border Stroke="LightGray" StrokeThickness="1" 
+            StrokeShape="RoundRectangle 8" Padding="8">
                             <VerticalStackLayout>
                                 <Label Text="Jogador 1" FontAttributes="Bold" />
                                 <Label x:Name="Jogador1Label" Text="-" />
                                 <Label x:Name="VitsP1" Text="" FontSize="12"/>
-                                <Button Text="Remover P1 da mesa" Clicked="OnRemoverP1" />
                             </VerticalStackLayout>
-                        </Frame>
-                        <Frame Grid.Column="1">
+                        </Border>
+
+                        <Border Grid.Column="1" Stroke="LightGray" StrokeThickness="1" 
+            StrokeShape="RoundRectangle 8" Padding="8">
                             <VerticalStackLayout>
                                 <Label Text="Jogador 2" FontAttributes="Bold" />
                                 <Label x:Name="Jogador2Label" Text="-" />
                                 <Label x:Name="VitsP2" Text="" FontSize="12"/>
-                                <Button Text="Remover P2 da mesa" Clicked="OnRemoverP2" />
                             </VerticalStackLayout>
-                        </Frame>
+                        </Border>
                     </Grid>
 
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
@@ -53,8 +54,8 @@
                     <Label Text="Regras" FontAttributes="Bold" FontSize="18" />
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                         <Label Text="Limite de vitórias consecutivas:" VerticalTextAlignment="Center"/>
-                        <Entry x:Name="EntryLimiteVits" Keyboard="Numeric" Text="3" />
                     </Grid>
+                        <Entry x:Name="EntryLimiteVits" Keyboard="Numeric" Text="3" />
                 </VerticalStackLayout>
             </Border>
 
@@ -87,20 +88,14 @@
                                             <SwipeItem Text="Remover" Invoked="OnSwipeRemover" />
                                         </SwipeItems>
                                     </SwipeView.RightItems>
-                                    <Grid Padding="8">
+                                    <Grid Padding="10">
+                                        <Label Text="{Binding Id}" FontSize="10" Opacity="0.6" HorizontalTextAlignment="End"/>
                                         <Label Text="{Binding Nome}" FontSize="16" />
-                                        <Label Text="{Binding Id}" FontSize="10" Opacity="0.6"/>
                                     </Grid>
                                 </SwipeView>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                        <Entry x:Name="EntryIndiceRemover" Placeholder="Remover por índice (0-base)" Keyboard="Numeric"/>
-                        <Button Grid.Column="1" Text="Remover por índice" Clicked="OnRemoverPorIndice" />
-                    </Grid>
-
                     <Button Text="Remover selecionado" Clicked="OnRemoverSelecionado" />
 
                 </VerticalStackLayout>
