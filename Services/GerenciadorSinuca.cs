@@ -35,16 +35,36 @@ public class GerenciadorSinuca
             throw new InvalidOperationException("Não há jogadores suficientes para começar a partida.");
     }
 
+    private void ResetStreak(Pessoa? p)
+    {
+        if (p != null) _vitoriasSeguidas[p.Id] = 0;
+    }
+
     public void LimparMesa()
     {
-        if (_jogador1 != null) _fila.Enqueue(_jogador1);
-        if (_jogador2 != null) _fila.Enqueue(_jogador2);
+        if (_jogador1 != null)
+        {
+            ResetStreak(_jogador1);
+            _fila.Enqueue(_jogador1);
+        }
+        if (_jogador2 != null)
+        {
+            ResetStreak(_jogador2);
+            _fila.Enqueue(_jogador2);
+        }
         _jogador1 = null;
         _jogador2 = null;
     }
 
     public void LimparFila()
     {
+        var ativosMesa = new HashSet<string>();
+        if (_jogador1 != null) ativosMesa.Add(_jogador1.Id);
+        if (_jogador2 != null) ativosMesa.Add(_jogador2.Id);
+
+        foreach (var id in _vitoriasSeguidas.Keys.ToList())
+            if (!ativosMesa.Contains(id)) _vitoriasSeguidas.Remove(id);
+
         _fila = new Queue<Pessoa>();
     }
 
@@ -52,34 +72,48 @@ public class GerenciadorSinuca
     {
         LimparMesa();
         LimparFila();
+        _vitoriasSeguidas.Clear();
     }
 
     public void RemoverJogadorMesa(int posicao)
     {
         if (posicao == 1 && _jogador1 != null)
         {
+            ResetStreak(_jogador1);
             _fila.Enqueue(_jogador1);
             _jogador1 = null;
         }
         else if (posicao == 2 && _jogador2 != null)
         {
+            ResetStreak(_jogador2);
             _fila.Enqueue(_jogador2);
             _jogador2 = null;
         }
     }
 
     public bool RemoverDaFilaPorId(string id)
-        => RebuildQueueExcluding(p => p.Id == id) > 0;
+    {
+        var removed = RebuildQueueExcluding(p => p.Id == id) > 0;
+        if (removed) _vitoriasSeguidas.Remove(id);
+        return removed;
+    }
 
     public int RemoverDaFilaPorNome(string nome)
-        => RebuildQueueExcluding(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase));
+    {
+        var removidos = new List<Pessoa>(_fila.Where(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase)));
+        var qtd = RebuildQueueExcluding(p => string.Equals(p.Nome.Trim(), nome.Trim(), StringComparison.OrdinalIgnoreCase));
+        foreach (var p in removidos) _vitoriasSeguidas.Remove(p.Id);
+        return qtd;
+    }
 
     public bool RemoverDaFilaPorIndice(int indiceZeroBase)
     {
         if (indiceZeroBase < 0 || indiceZeroBase >= _fila.Count) return false;
         var list = _fila.ToList();
+        var removido = list[indiceZeroBase];
         list.RemoveAt(indiceZeroBase);
         _fila = new Queue<Pessoa>(list);
+        _vitoriasSeguidas.Remove(removido.Id);
         return true;
     }
 
@@ -87,17 +121,21 @@ public class GerenciadorSinuca
     {
         if (_jogador1?.Id == pessoa.Id)
         {
+            ResetStreak(_jogador1);
             _fila.Enqueue(_jogador1);
             _jogador1 = null;
             return true;
         }
         if (_jogador2?.Id == pessoa.Id)
         {
+            ResetStreak(_jogador2);
             _fila.Enqueue(_jogador2);
             _jogador2 = null;
             return true;
         }
-        return RemoverDaFilaPorId(pessoa.Id);
+        var removed = RemoverDaFilaPorId(pessoa.Id);
+        if (removed) _vitoriasSeguidas.Remove(pessoa.Id);
+        return removed;
     }
 
     private int RebuildQueueExcluding(Func<Pessoa, bool> predicate)
