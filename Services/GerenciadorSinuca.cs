@@ -133,7 +133,6 @@ public class GerenciadorSinuca
             _jogador2 = null;
             return true;
         }
-
         var removed = RemoverDaFilaPorId(pessoa.Id);
         if (removed) _vitoriasSeguidas.Remove(pessoa.Id);
         return removed;
